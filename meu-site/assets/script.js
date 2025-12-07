@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+    // Este evento garante que o script só rode DEPOIS que a página HTML for carregada.
+    
     // =========================================================
     // 1. Contador de Tempo (ANOS, MESES, DIAS, HORAS, MINUTOS, SEGUNDOS)
     // =========================================================
@@ -15,16 +17,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
     
     function updateCountdown() {
         const now = new Date();
-        let start = new Date(startDate.getTime()); // Cria uma cópia da data inicial
+        let start = new Date(startDate.getTime()); // Cria uma cópia para manipulação
 
         const diff = now.getTime() - start.getTime();
 
         if (diff < 0) {
+            // Se, por algum motivo, a data atual for anterior à de início
             countdownDisplay.innerHTML = `<span style="color: red;">Aguardando o início...</span>`;
             return;
         }
 
-        // --- CÁLCULO DE ANO, MÊS, DIA (Subtração precisa de componentes) ---
+        // --- CÁLCULO DE ANO, MÊS, DIA (A forma mais precisa) ---
         
         let years = now.getFullYear() - start.getFullYear();
         let months = now.getMonth() - start.getMonth();
@@ -33,12 +36,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         let minutes = now.getMinutes() - start.getMinutes();
         let seconds = now.getSeconds() - start.getSeconds();
 
-        // 1. Propagar "empréstimos" (Segundos -> Minutos -> Horas)
+        // 1. Propagar "empréstimos" (Segundos para Minutos, Minutos para Horas)
         if (seconds < 0) { seconds += 60; minutes--; }
         if (minutes < 0) { minutes += 60; hours--; }
         if (hours < 0) { hours += 24; days--; }
         
-        // 2. Propagar "empréstimos" (Dias -> Meses)
+        // 2. Propagar "empréstimos" (Horas para Dias)
         if (days < 0) {
             // Pega o número de dias do mês anterior
             const daysInPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
@@ -46,7 +49,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             months--;
         }
         
-        // 3. Propagar "empréstimos" (Meses -> Anos)
+        // 3. Propagar "empréstimos" (Dias para Meses, Meses para Anos)
         if (months < 0) {
             months += 12;
             years--;
@@ -54,6 +57,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         // --- Formata o texto final ---
         
+        // Lógica de plural: se for 1, usa singular; se for 0 ou >1, usa plural.
         const yearText = `${years} ano${years !== 1 ? 's' : ''}`;
         const monthText = `${months} mês${months !== 1 ? 'es' : ''}`;
         const dayText = `${days} dia${days !== 1 ? 's' : ''}`;
@@ -70,6 +74,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     // Atualiza o contador a cada segundo
     setInterval(updateCountdown, 1000);
+
+    // Inicia o contador
     updateCountdown();
 
 
@@ -78,13 +84,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // =========================================================
 
     const audio = document.getElementById('audio');
-    const btnPlayPause = document.getElementById('btnPlayPause'); 
+    const btnPlayPause = document.getElementById('btnPlayPause'); // Novo botão principal
     const progressBar = document.getElementById('progressBar');
     const currentTimeDisplay = document.getElementById('currentTimeDisplay');
     const durationDisplay = document.getElementById('durationDisplay');
 
     if (audio && btnPlayPause && progressBar && currentTimeDisplay && durationDisplay) {
         
+        // Função utilitária para formatar segundos em M:SS
         function formatTime(s) {
             if (isNaN(s) || s < 0) return '0:00';
             const m = Math.floor(s / 60);
@@ -92,10 +99,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
             return `${m}:${String(sec).padStart(2, '0')}`;
         }
 
-        // Adiciona a cor verde ao progresso da barra
+        // Função para atualizar a barra de preenchimento (cor verde Spotify)
         function updateProgressFill() {
             const value = (progressBar.value - progressBar.min) / (progressBar.max - progressBar.min) * 100;
-            // Usamos a variável CSS --accent para a cor verde
             progressBar.style.background = 'linear-gradient(to right, var(--accent) 0%, var(--accent) ' + value + '%, #333 ' + value + '%, #333 100%)';
         }
 
@@ -113,9 +119,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // --- Atualização da Barra e Tempo ---
         audio.addEventListener('loadedmetadata', () => {
             progressBar.max = audio.duration;
-            // O tempo restante é exibido como negativo na imagem de referência
-            durationDisplay.textContent = formatTime(audio.duration); 
-            currentTimeDisplay.textContent = formatTime(0);
+            durationDisplay.textContent = formatTime(audio.duration);
+            currentTimeDisplay.textContent = formatTime(0); // Garante 0:00 no início
             updateProgressFill();
         });
 
@@ -123,8 +128,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const currentTime = audio.currentTime;
             progressBar.value = currentTime;
             currentTimeDisplay.textContent = formatTime(currentTime);
-            // Exibe o tempo restante
-            durationDisplay.textContent = `-${formatTime(audio.duration - currentTime)}`; 
+            durationDisplay.textContent = formatTime(audio.duration - currentTime); // Tempo restante (como na imagem)
             updateProgressFill();
         });
         
@@ -136,12 +140,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
         // --- Fim da Música ---
         audio.addEventListener('ended', () => {
             btnPlayPause.innerHTML = '▶️';
-            audio.currentTime = 0; 
+            audio.currentTime = 0; // Volta para o início
             progressBar.value = 0;
             updateProgressFill();
         });
     } else {
          console.warn("Aviso: Elementos do player de áudio não encontrados.");
     }
+    
+    // (Outros botões como Shuffle, Prev, Next, Repeat não fazem nada no momento)
 
 });
