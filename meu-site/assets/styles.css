@@ -93,7 +93,43 @@ html, body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
-/* 3. Estilo do Contador */
+/* 3. Estilo Spotify para o Player de Áudio */
+.audio-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #282828;
+}
+
+/* Esconder o player HTML padrão, usaremos os controles do JS/CSS */
+#audio { display: none; }
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+.controls button {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 24px;
+    transition: color 0.2s;
+}
+.controls button:hover {
+    color: var(--accent);
+}
+
+#time {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* 4. Estilo do Contador */
 .timer-card {
     text-align: center;
     display: flex;
@@ -106,13 +142,13 @@ html, body {
     margin-bottom: 10px;
 }
 #countdown-display {
-    font-size: 28px; /* Ajustado para caber Anos/Meses/Dias */
+    font-size: 36px;
     font-weight: bold;
     color: var(--text-light);
     margin-top: 10px;
 }
 
-/* 4. Estilo da Galeria de Memórias */
+/* 5. Estilo da Galeria de Memórias */
 .gallery {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -132,22 +168,60 @@ html, body {
     transform: scale(1.05);
 }
 
-/* --- ESTILOS PARA O PLAYER TELA CHEIA --- */
+/* Responsividade */
+@media (max-width: 768px) {
+    .main { padding: 20px 10px; }
+    .topbar h1 { font-size: 28px; }
+    .titulo-romantico { font-size: 36px; }
+    .foto-principal { height: 200px; }
+    .content { grid-template-columns: 1fr; } /* Apenas 1 coluna em celular */
+}
 
+/* --- AJUSTES MANUAIS DE POSICIONAMENTO PARA FOTOS --- */
+
+/* 1. Foco no TOPO (para evitar cortar a cabeça) */
+.foco-topo {
+    object-position: 50% 0% !important; 
+}
+
+/* 2. Foco na BASE (para evitar cortar a mão ou pés) */
+.foco-base {
+    object-position: 50% 100% !important; 
+}
+
+/* 3. Foco na ESQUERDA */
+.foco-esquerda {
+    object-position: 0% 50% !important;
+}
+
+/* 4. Foco na DIREITA */
+.foco-direita {
+    object-position: 100% 50% !important;
+}
+
+/* 5. Ajuste Fino Personalizado (ex: 20% da esquerda e 80% do topo) */
+.foco-personalizado-1 {
+    object-position: 20% 80% !important;
+}
+
+/* --- NOVOS ESTILOS PARA O PLAYER TELA CHEIA (Inspirado na sua imagem) --- */
+
+/* Estilo do Card Principal para o Player */
 .audio-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
+
 /* Capa da Música */
 .music-cover {
     width: 80%; /* Ocupa a maior parte do espaço no card */
     max-width: 300px;
-    aspect-ratio: 1 / 1; /* Quadrado perfeito */
+    aspect-ratio: 1 / 1; /* Garante que seja um quadrado perfeito */
     overflow: hidden;
     border-radius: 8px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); 
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); /* Sombra para destacar */
     margin: 15px 0;
 }
 .music-cover img {
@@ -156,6 +230,7 @@ html, body {
     object-fit: cover;
     object-position: center;
 }
+
 /* Informações da Música */
 .song-info {
     margin-bottom: 20px;
@@ -171,11 +246,14 @@ html, body {
     color: var(--text-muted);
     margin-top: 5px;
 }
+
 /* Controles e Barra de Progresso */
 .audio-controls-full {
     width: 100%;
     padding: 0 10px;
 }
+
+/* Barra de Progresso (Estilo Limpo) */
 .progress-bar-container {
     display: flex;
     align-items: center;
@@ -185,25 +263,28 @@ html, body {
 .time-label {
     color: var(--text-muted);
     font-size: 0.85em;
-    width: 40px;
+    width: 40px; /* Garante que o tempo não trema */
 }
 #progressBar {
-    flex-grow: 1;
+    flex-grow: 1; /* Ocupa o espaço central */
     -webkit-appearance: none;
     appearance: none;
     height: 4px;
-    background: #333;
+    background: #333; /* Fundo cinza escuro */
     border-radius: 2px;
     cursor: pointer;
 }
+/* Estilizando o 'thumb' (o círculo que você arrasta) */
 #progressBar::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 12px;
     height: 12px;
-    background: var(--text-light);
+    background: var(--text-light); /* Círculo branco */
     border-radius: 50%;
 }
+/* TODO: Configurar a cor de preenchimento da barra com o verde Spotify via JS */
+
 /* Controles Detalhados */
 .controls-detailed {
     display: flex;
@@ -214,16 +295,16 @@ html, body {
 .control-btn {
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--text-muted); /* Ícones menores em cinza */
     cursor: pointer;
     font-size: 1.4em;
     transition: color 0.2s;
 }
 .control-btn:hover {
-    color: var(--text-light);
+    color: var(--text-light); /* Ficam brancos no hover */
 }
 .play-pause-lg {
-    background: var(--text-light);
+    background: var(--text-light); /* Botão Play grande em círculo branco */
     border: none;
     border-radius: 50%;
     width: 55px;
@@ -232,35 +313,10 @@ html, body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 2em;
-    color: var(--bg-dark);
+    font-size: 2em; /* Tamanho do ícone */
+    color: var(--bg-dark); /* Ícone preto */
     transition: transform 0.1s;
 }
 .play-pause-lg:hover {
     transform: scale(1.05);
-}
-
-/* --- CLASSES PARA AJUSTES MANUAIS DE POSICIONAMENTO (Enquadramento de Fotos) --- */
-.foco-topo {
-    object-position: 50% 0% !important; 
-}
-.foco-base {
-    object-position: 50% 100% !important; 
-}
-.foco-esquerda {
-    object-position: 0% 50% !important;
-}
-.foco-direita {
-    object-position: 100% 50% !important;
-}
-
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .main { padding: 20px 10px; }
-    .topbar h1 { font-size: 28px; }
-    .titulo-romantico { font-size: 36px; }
-    .foto-principal { height: 200px; }
-    .content { grid-template-columns: 1fr; } /* Apenas 1 coluna em celular */
-    #countdown-display { font-size: 24px; }
 }
